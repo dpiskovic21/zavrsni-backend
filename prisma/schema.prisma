@@ -12,3 +12,81 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Korisnik {
+  id           Int                @id @default(autoincrement())
+  ime          String
+  prezime      String
+  email        String             @unique
+  hash         String
+  admin        Boolean
+  projekti     VoditeljProjekta[]
+  izvrsitelj   Zadatak[]          @relation("izvrsitelj")
+  izvjestitelj Zadatak[]          @relation("izvjestitelj")
+  komentar     Komentar[]
+}
+
+model Projekt {
+  id             Int                @id @default(autoincrement())
+  naziv          String
+  datumPocetaka  DateTime
+  datumZavrsetka DateTime
+  voditelji      VoditeljProjekta[]
+  zadaci         Zadatak[]
+}
+
+model VoditeljProjekta {
+  korisnik   Korisnik @relation(fields: [korisnikId], references: [id])
+  korisnikId Int
+  projekt    Projekt  @relation(fields: [projektId], references: [id])
+  projektId  Int
+
+  @@id([korisnikId, projektId])
+}
+
+model Zadatak {
+  id             Int        @id @default(autoincrement())
+  naziv          String
+  opis           String
+  projekt        Projekt    @relation(fields: [projektId], references: [id])
+  projektId      Int
+  izvrsitelj     Korisnik   @relation("izvrsitelj", fields: [izvrsiteljId], references: [id])
+  izvrsiteljId   Int
+  izvjestitelj   Korisnik   @relation("izvjestitelj", fields: [izvjestiteljId], references: [id])
+  izvjestiteljId Int
+  prioritet      Prioritet
+  rok            DateTime
+  status         Status
+  datumIzrade    DateTime
+  datumZavrsetka DateTime
+  privitci       Privitak[]
+  komentari      Komentar[]
+}
+
+enum Status {
+  U_IZRADI    @map("U izradi")
+  NA_PREGLEDU @map("Na pregledu")
+  ZATVOREN    @map("Zatvoren")
+}
+
+enum Prioritet {
+  NIZAK
+  SREDNJI
+  VISOK
+  KRITICAN
+}
+
+model Privitak {
+  putanja   String  @id
+  zadatakId Int
+  zadatak   Zadatak @relation(fields: [zadatakId], references: [id])
+}
+
+model Komentar {
+  id         Int      @id @default(autoincrement())
+  sadrzaj    String
+  korisnikId Int
+  korisnik   Korisnik @relation(fields: [korisnikId], references: [id])
+  zadatakId  Int
+  zadatak    Zadatak  @relation(fields: [zadatakId], references: [id])
+}
