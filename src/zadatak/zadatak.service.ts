@@ -1,25 +1,59 @@
 import { Injectable } from '@nestjs/common';
 import { CreateZadatakDTO, UpdateZadatakDTO } from './dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Prioritet, Status } from '@prisma/client';
 
 @Injectable()
 export class ZadatakService {
+  constructor(private prisma: PrismaService) {}
+
   create(dto: CreateZadatakDTO) {
-    return 'This action adds a new zadatak';
+    const { projektId, izvrsiteljId, izvjestiteljId, prioritet, ...ostalo } =
+      dto;
+    return this.prisma.zadatak.create({
+      data: {
+        ...ostalo,
+        prioritet: prioritet as Prioritet,
+        projekt: { connect: { id: projektId } },
+        izvrsitelj: { connect: { id: izvrsiteljId } },
+        izvjestitelj: { connect: { id: izvjestiteljId } },
+      },
+    });
   }
 
   findAll() {
-    return `This action returns all zadatak`;
+    return this.prisma.zadatak.findMany();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} zadatak`;
+    return this.prisma.zadatak.findUniqueOrThrow({
+      where: { id },
+    });
   }
 
   update(id: number, dto: UpdateZadatakDTO) {
-    return `This action updates a #${id} zadatak`;
+    let datumZavrsetka: Date;
+    if (dto.status && dto.status == Status.ZATVOREN) {
+      datumZavrsetka = new Date();
+    }
+
+    let izvrsitelj;
+    if (dto.izvrsiteljId) {
+      izvrsitelj = { connect: { id: dto.izvrsiteljId } };
+    }
+    return this.prisma.zadatak.update({
+      where: { id },
+      data: {
+        status: (dto.status as Status) ?? undefined,
+        datumZavrsetka: datumZavrsetka ?? undefined,
+        izvrsitelj,
+      },
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} zadatak`;
+    return this.prisma.zadatak.delete({
+      where: { id },
+    });
   }
 }

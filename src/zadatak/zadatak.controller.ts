@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  BadRequestException,
 } from '@nestjs/common';
 import { ZadatakService } from './zadatak.service';
 import { CreateZadatakDTO, UpdateZadatakDTO } from './dto';
@@ -15,8 +16,14 @@ export class ZadatakController {
   constructor(private readonly zadatakService: ZadatakService) {}
 
   @Post()
-  create(@Body() dto: CreateZadatakDTO) {
-    return this.zadatakService.create(dto);
+  async create(@Body() dto: CreateZadatakDTO) {
+    try {
+      return await this.zadatakService.create(dto);
+    } catch (e) {
+      throw new BadRequestException(
+        'Projekt, izvršitelj ili izvjestitelj ne postoje. ',
+      );
+    }
   }
 
   @Get()
@@ -30,8 +37,12 @@ export class ZadatakController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateZadatakDTO) {
-    return this.zadatakService.update(+id, dto);
+  async update(@Param('id') id: string, @Body() dto: UpdateZadatakDTO) {
+    try {
+      return await this.zadatakService.update(+id, dto);
+    } catch (e) {
+      throw new BadRequestException('Izvršitelj ne postoji. ');
+    }
   }
 
   @Delete(':id')
