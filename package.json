@@ -9,7 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "start:dev": "npm run db:dev:start && nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -18,7 +18,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db:dev:start": "docker run --name postgres-db -e POSTGRES_PASSWORD=docker -p 5432:5432 -d postgres"
+    "db:dev:setup": "docker run --name postgres-db -e POSTGRES_PASSWORD=docker -p 5432:5432 -d postgres && npx prisma migrate deploy",
+    "db:dev:start": "docker start postgres-db"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
