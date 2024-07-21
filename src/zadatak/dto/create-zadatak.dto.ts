@@ -32,7 +32,7 @@ export class CreateZadatakDTO {
   @IsString()
   @IsNotEmpty()
   @IsEnum(Prioritet)
-  proritet: string;
+  prioritet: string;
 
   @IsNotEmpty()
   @IsDateString()
