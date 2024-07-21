@@ -5,5 +5,6 @@ import { KorisnikController } from './korisnik.controller';
 @Module({
   controllers: [KorisnikController],
   providers: [KorisnikService],
+  exports: [KorisnikService],
 })
 export class KorisnikModule {}
