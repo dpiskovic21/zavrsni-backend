@@ -83,10 +83,11 @@ model Privitak {
 }
 
 model Komentar {
-  id         Int      @id @default(autoincrement())
-  sadrzaj    String
-  korisnikId Int
-  korisnik   Korisnik @relation(fields: [korisnikId], references: [id])
-  zadatakId  Int
-  zadatak    Zadatak  @relation(fields: [zadatakId], references: [id])
+  id          Int      @id @default(autoincrement())
+  sadrzaj     String
+  korisnikId  Int
+  korisnik    Korisnik @relation(fields: [korisnikId], references: [id])
+  zadatakId   Int
+  zadatak     Zadatak  @relation(fields: [zadatakId], references: [id])
+  datumIzrade DateTime @default(now())
 }
