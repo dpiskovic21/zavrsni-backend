@@ -56,9 +56,9 @@ model Zadatak {
   izvjestiteljId Int
   prioritet      Prioritet
   rok            DateTime
-  status         Status
-  datumIzrade    DateTime
-  datumZavrsetka DateTime
+  status         Status     @default(U_IZRADI)
+  datumIzrade    DateTime   @default(now())
+  datumZavrsetka DateTime?
   privitci       Privitak[]
   komentari      Komentar[]
 }
