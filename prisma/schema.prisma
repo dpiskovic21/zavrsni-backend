@@ -29,7 +29,7 @@ model Korisnik {
 model Projekt {
   id             Int                @id @default(autoincrement())
   naziv          String
-  datumPocetaka  DateTime           @default(now())
+  datumPocetka   DateTime           @default(now())
   datumZavrsetka DateTime?
   voditelji      VoditeljProjekta[]
   zadaci         Zadatak[]
