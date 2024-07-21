@@ -26,8 +26,21 @@ export class ZadatakService {
   }
 
   findOne(id: number) {
+    const poljaKorisnika = {
+      select: {
+        id: true,
+        ime: true,
+        prezime: true,
+      },
+    };
     return this.prisma.zadatak.findUniqueOrThrow({
       where: { id },
+      include: {
+        izvjestitelj: poljaKorisnika,
+        izvrsitelj: poljaKorisnika,
+        komentari: true,
+        privitci: true,
+      },
     });
   }
 
