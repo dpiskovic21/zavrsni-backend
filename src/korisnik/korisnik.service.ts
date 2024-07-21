@@ -20,18 +20,45 @@ export class KorisnikService {
   }
 
   findAll() {
-    return `This action returns all korisnik`;
+    return this.prisma.korisnik.findMany({
+      select: {
+        id: true,
+        ime: true,
+        prezime: true,
+        email: true,
+        admin: true,
+      },
+    });
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} korisnik`;
+    return this.prisma.korisnik.findUniqueOrThrow({
+      where: { id },
+      select: {
+        id: true,
+        ime: true,
+        prezime: true,
+        email: true,
+        admin: true,
+      },
+    });
   }
 
-  update(id: number, dto: UpdateKorisnikDTO) {
-    return `This action updates a #${id} korisnik`;
+  async update(id: number, dto: UpdateKorisnikDTO) {
+    const { lozinka } = dto;
+    const hash = await bcrypt.hash(lozinka, 10);
+
+    return this.prisma.korisnik.update({
+      where: { id },
+      data: {
+        hash,
+      },
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} korisnik`;
+    return this.prisma.korisnik.delete({
+      where: { id },
+    });
   }
 }

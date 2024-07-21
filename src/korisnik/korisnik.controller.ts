@@ -6,9 +6,12 @@ import {
   Patch,
   Param,
   Delete,
+  BadRequestException,
 } from '@nestjs/common';
 import { KorisnikService } from './korisnik.service';
 import { CreateKorisnikDTO, UpdateKorisnikDTO } from './dto';
+import { stat } from 'fs';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Controller('korisnik')
 export class KorisnikController {
@@ -25,17 +28,29 @@ export class KorisnikController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.korisnikService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    try {
+      return await this.korisnikService.findOne(+id);
+    } catch (e) {
+      throw new BadRequestException('Korisnik ne postoji');
+    }
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateKorisnikDTO) {
-    return this.korisnikService.update(+id, dto);
+  async update(@Param('id') id: string, @Body() dto: UpdateKorisnikDTO) {
+    try {
+      return await this.korisnikService.update(+id, dto);
+    } catch (e) {
+      throw new BadRequestException('Korisnik ne postoji');
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.korisnikService.remove(+id);
+  async remove(@Param('id') id: string) {
+    try {
+      return await this.korisnikService.remove(+id);
+    } catch (e) {
+      throw new BadRequestException('Korisnik ne postoji');
+    }
   }
 }
