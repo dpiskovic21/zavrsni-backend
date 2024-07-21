@@ -2,13 +2,16 @@ import {
   Controller,
   Get,
   Post,
-  Body,
-  Patch,
   Param,
   Delete,
-  MethodNotAllowedException,
+  UseInterceptors,
+  UploadedFile,
+  InternalServerErrorException,
+  BadRequestException,
+  Body,
 } from '@nestjs/common';
 import { PrivitakService } from './privitak.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CreatePrivitakDTO } from './dto';
 
 @Controller('privitak')
@@ -16,27 +19,40 @@ export class PrivitakController {
   constructor(private readonly privitakService: PrivitakService) {}
 
   @Post()
-  create(@Body() dto: CreatePrivitakDTO) {
-    return this.privitakService.create(dto);
-  }
-
-  @Get()
-  findAll() {
-    return this.privitakService.findAll();
+  @UseInterceptors(FileInterceptor('file'))
+  async create(
+    @Body() dto: CreatePrivitakDTO,
+    @UploadedFile()
+    file: Express.Multer.File,
+  ) {
+    //TODO Probat implementirati upload tako da ostane originalno ime file-a
+    try {
+      return await this.privitakService.create(dto, file.filename);
+    } catch (e) {
+      await this.privitakService.remove(file.filename);
+      throw new BadRequestException('Zadatak ne postoji!');
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.privitakService.findOne(+id);
-  }
+  async findOne(@Param('id') id: string) {
+    try {
+      return await this.privitakService.find(id);
+    } catch (e) {
+      if (e.code === 'ENOENT') throw new BadRequestException('File not found');
 
-  @Patch(':id')
-  update() {
-    return new MethodNotAllowedException();
+      throw new InternalServerErrorException('Unknown server error.');
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.privitakService.remove(+id);
+  async remove(@Param('id') id: string) {
+    try {
+      return await this.privitakService.remove(id);
+    } catch (e) {
+      if (e.code === 'ENOENT') throw new BadRequestException('File not found');
+
+      throw new InternalServerErrorException('Unknown server error.');
+    }
   }
 }

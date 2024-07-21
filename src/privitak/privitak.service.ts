@@ -1,21 +1,30 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreatePrivitakDTO } from './dto';
+import * as fs from 'fs/promises';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class PrivitakService {
-  create(dto: CreatePrivitakDTO) {
-    return 'This action adds a new privitak';
+  constructor(private prisma: PrismaService) {}
+
+  async create(dto: CreatePrivitakDTO, putanja: string) {
+    const { zadatakId } = dto;
+    if (!zadatakId || isNaN(parseInt(zadatakId)))
+      throw new Error('Invalid zadatakId');
+
+    return this.prisma.privitak.create({
+      data: {
+        zadatakId: parseInt(zadatakId),
+        putanja,
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all privitak`;
+  find(id: string): Promise<Buffer> {
+    return fs.readFile('./upload/' + id);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} privitak`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} privitak`;
+  remove(id: string) {
+    return fs.rm('./upload/' + id);
   }
 }
