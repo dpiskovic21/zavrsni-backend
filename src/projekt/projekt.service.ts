@@ -25,7 +25,10 @@ export class ProjektService {
   }
 
   findOne(id: number) {
-    return this.prisma.projekt.findUniqueOrThrow({ where: { id } });
+    return this.prisma.projekt.findUniqueOrThrow({
+      where: { id },
+      include: { voditelji: true, zadaci: true },
+    });
   }
 
   update(id: number, dto: UpdateProjektDTO) {
