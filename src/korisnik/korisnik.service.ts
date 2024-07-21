@@ -1,10 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { CreateKorisnikDTO, UpdateKorisnikDTO } from './dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class KorisnikService {
-  create(dto: CreateKorisnikDTO) {
-    return 'This action adds a new korisnik';
+  constructor(private prisma: PrismaService) {}
+
+  async create(dto: CreateKorisnikDTO) {
+    const { lozinka, ...ostatak } = dto;
+    const hash = await bcrypt.hash(lozinka, 10);
+
+    return this.prisma.korisnik.create({
+      data: {
+        ...ostatak,
+        hash,
+      },
+    });
   }
 
   findAll() {
