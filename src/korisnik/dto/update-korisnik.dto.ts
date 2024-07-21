@@ -1,6 +1,7 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateKorisnikDTO } from '.';
+import { IsNotEmpty, IsString } from 'class-validator';
 
-export class UpdateKorisnikDTO extends PartialType(CreateKorisnikDTO) {
+export class UpdateKorisnikDTO {
+  @IsString()
+  @IsNotEmpty()
   lozinka: string;
 }
