@@ -38,7 +38,11 @@ export class ZadatakService {
       include: {
         izvjestitelj: poljaKorisnika,
         izvrsitelj: poljaKorisnika,
-        komentari: true,
+        komentari: {
+          include: {
+            korisnik: poljaKorisnika,
+          },
+        },
         privitci: true,
       },
     });

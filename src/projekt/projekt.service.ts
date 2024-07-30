@@ -21,7 +21,11 @@ export class ProjektService {
   }
 
   findAll() {
-    return this.prisma.projekt.findMany();
+    return this.prisma.projekt.findMany({
+      include: {
+        voditelji: true,
+      },
+    });
   }
 
   findOne(id: number) {
