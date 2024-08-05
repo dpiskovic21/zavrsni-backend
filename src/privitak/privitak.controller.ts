@@ -25,9 +25,13 @@ export class PrivitakController {
     @UploadedFile()
     file: Express.Multer.File,
   ) {
-    //TODO Probat implementirati upload tako da ostane originalno ime file-a
     try {
-      return await this.privitakService.create(dto, file.filename);
+      return await this.privitakService.create(
+        dto,
+        file.filename,
+        file.originalname,
+        file.mimetype,
+      );
     } catch (e) {
       await this.privitakService.remove(file.filename);
       throw new BadRequestException('Zadatak ne postoji!');

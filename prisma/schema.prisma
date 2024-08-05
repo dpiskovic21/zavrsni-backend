@@ -78,6 +78,8 @@ enum Prioritet {
 
 model Privitak {
   putanja   String  @id
+  naziv     String
+  mimetype  String
   zadatakId Int
   zadatak   Zadatak @relation(fields: [zadatakId], references: [id])
 }

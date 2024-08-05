@@ -7,7 +7,12 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class PrivitakService {
   constructor(private prisma: PrismaService) {}
 
-  async create(dto: CreatePrivitakDTO, putanja: string) {
+  async create(
+    dto: CreatePrivitakDTO,
+    putanja: string,
+    naziv: string,
+    mimetype: string,
+  ) {
     const { zadatakId } = dto;
     if (!zadatakId || isNaN(parseInt(zadatakId)))
       throw new Error('Invalid zadatakId');
@@ -16,6 +21,8 @@ export class PrivitakService {
       data: {
         zadatakId: parseInt(zadatakId),
         putanja,
+        naziv,
+        mimetype,
       },
     });
   }
