@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProjektDTO, UpdateProjektDTO } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Status } from '@prisma/client';
 
 @Injectable()
 export class ProjektService {
@@ -33,6 +34,55 @@ export class ProjektService {
       where: { id },
       include: { voditelji: true, zadaci: true },
     });
+  }
+
+  async getStatistika(id: number) {
+    const sviZadaci = await this.prisma.zadatak.findMany({
+      where: { projektId: id },
+      select: {
+        rok: true,
+        datumZavrsetka: true,
+        status: true,
+        izvrsitelj: {
+          select: {
+            id: true,
+            ime: true,
+            prezime: true,
+          },
+        },
+      },
+    });
+    console.log(sviZadaci);
+    const korisniciSaBrojemZadataka = sviZadaci.reduce((acc, zadatak) => {
+      const { id, ime, prezime } = zadatak.izvrsitelj;
+      if (!acc[id]) {
+        acc[id] = {
+          naziv: ime + ' ' + prezime,
+          brojZadataka: 0,
+        };
+      }
+      acc[id].brojZadataka += 1;
+      return acc;
+    }, {});
+    const zakasnjeliRokovi = sviZadaci.reduce((acc, zadatak) => {
+      if (
+        zadatak.status === Status.ZATVOREN &&
+        zadatak.rok < zadatak.datumZavrsetka
+      ) {
+        const { id, ime, prezime } = zadatak.izvrsitelj;
+        if (!acc[id]) {
+          acc[id] = {
+            naziv: ime + ' ' + prezime,
+            brojZadataka: 0,
+          };
+        }
+        acc[id].brojZadataka += 1;
+      }
+      return acc;
+    }, {});
+    console.log(korisniciSaBrojemZadataka);
+    console.log(zakasnjeliRokovi);
+    return { korisniciSaBrojemZadataka, zakasnjeliRokovi };
   }
 
   update(id: number, dto: UpdateProjektDTO) {

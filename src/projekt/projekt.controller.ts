@@ -29,6 +29,11 @@ export class ProjektController {
     return this.projektService.findOne(+id);
   }
 
+  @Get(':id/statistika')
+  statistika(@Param('id') id: string) {
+    return this.projektService.getStatistika(+id);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateProjektDTO) {
     return this.projektService.update(+id, dto);
