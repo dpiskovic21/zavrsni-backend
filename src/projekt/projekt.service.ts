@@ -37,8 +37,9 @@ export class ProjektService {
   }
 
   async getStatistika(id: number) {
+    const where = id != -1 ? { projektId: id } : undefined;
     const sviZadaci = await this.prisma.zadatak.findMany({
-      where: { projektId: id },
+      where,
       select: {
         rok: true,
         datumZavrsetka: true,
@@ -52,7 +53,6 @@ export class ProjektService {
         },
       },
     });
-    console.log(sviZadaci);
     const korisniciSaBrojemZadataka = sviZadaci.reduce((acc, zadatak) => {
       const { id, ime, prezime } = zadatak.izvrsitelj;
       if (!acc[id]) {
@@ -80,8 +80,7 @@ export class ProjektService {
       }
       return acc;
     }, {});
-    console.log(korisniciSaBrojemZadataka);
-    console.log(zakasnjeliRokovi);
+
     return { korisniciSaBrojemZadataka, zakasnjeliRokovi };
   }
 
