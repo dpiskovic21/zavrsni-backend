@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProjektDTO, UpdateProjektDTO } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { StatusZadatka } from '@prisma/client';
+import { StatusProjekta, StatusZadatka } from '@prisma/client';
 
 @Injectable()
 export class ProjektService {
@@ -94,8 +94,32 @@ export class ProjektService {
     return { korisniciSaBrojemZadataka, zakasnjeliRokovi };
   }
 
-  update(id: number, dto: UpdateProjektDTO) {
-    return `This action updates a #${id} projekt`;
+  async update(id: number, dto: UpdateProjektDTO) {
+    await this.prisma.projekt.update({
+      where: { id },
+      data: {
+        status: (dto.status as StatusProjekta) ?? undefined,
+        naziv: dto.naziv ?? undefined,
+      },
+    });
+
+    if (dto.voditelji) {
+      await this.prisma.voditeljProjekta.deleteMany({
+        where: { projektId: id },
+      });
+
+      await this.prisma.voditeljProjekta.createMany({
+        data: dto.voditelji.map((k) => ({
+          korisnikId: k,
+          projektId: id,
+        })),
+      });
+    }
+
+    return this.prisma.projekt.findUnique({
+      where: { id },
+      include: { voditelji: true },
+    });
   }
 
   remove(id: number) {
