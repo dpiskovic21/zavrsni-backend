@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { ProjektService } from './projekt.service';
 import { CreateProjektDTO, UpdateProjektDTO } from './dto';
@@ -30,8 +31,8 @@ export class ProjektController {
   }
 
   @Get(':id/statistika')
-  statistika(@Param('id') id: string) {
-    return this.projektService.getStatistika(+id);
+  statistika(@Param('id') id: string, @Query('datum') datum: string) {
+    return this.projektService.getStatistika(+id, datum);
   }
 
   @Patch(':id')

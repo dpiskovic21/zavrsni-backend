@@ -36,8 +36,18 @@ export class ProjektService {
     });
   }
 
-  async getStatistika(id: number) {
-    const where = id != -1 ? { projektId: id } : undefined;
+  async getStatistika(id: number, datum: string) {
+    let where: any = id != -1 ? { projektId: id } : undefined;
+    if (datum) {
+      const d = new Date(datum);
+      where = {
+        ...where,
+        datumIzrade: {
+          gt: new Date(d.getFullYear(), d.getMonth()),
+          lte: new Date(d.getFullYear(), d.getMonth() + 1),
+        },
+      };
+    }
     const sviZadaci = await this.prisma.zadatak.findMany({
       where,
       select: {
