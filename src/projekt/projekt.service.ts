@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProjektDTO, UpdateProjektDTO } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Status } from '@prisma/client';
+import { StatusZadatka } from '@prisma/client';
 
 @Injectable()
 export class ProjektService {
@@ -76,7 +76,7 @@ export class ProjektService {
     }, {});
     const zakasnjeliRokovi = sviZadaci.reduce((acc, zadatak) => {
       if (
-        zadatak.status === Status.ZATVOREN &&
+        zadatak.status === StatusZadatka.ZATVOREN &&
         zadatak.rok < zadatak.datumZavrsetka
       ) {
         const { id, ime, prezime } = zadatak.izvrsitelj;

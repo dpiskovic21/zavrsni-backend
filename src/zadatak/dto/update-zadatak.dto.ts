@@ -1,4 +1,4 @@
-import { Status } from '@prisma/client';
+import { StatusZadatka } from '@prisma/client';
 import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class UpdateZadatakDTO {
@@ -7,7 +7,7 @@ export class UpdateZadatakDTO {
   izvrsiteljId: number;
 
   @IsString()
-  @IsEnum(Status)
+  @IsEnum(StatusZadatka)
   @IsOptional()
   status: string;
 

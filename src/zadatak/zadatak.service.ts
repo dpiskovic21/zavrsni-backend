@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateZadatakDTO, UpdateZadatakDTO } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Prioritet, Status } from '@prisma/client';
+import { Prioritet, StatusZadatka } from '@prisma/client';
 
 @Injectable()
 export class ZadatakService {
@@ -50,7 +50,7 @@ export class ZadatakService {
 
   update(id: number, dto: UpdateZadatakDTO) {
     let datumZavrsetka: Date;
-    if (dto.status && dto.status == Status.ZATVOREN) {
+    if (dto.status && dto.status == StatusZadatka.ZATVOREN) {
       datumZavrsetka = new Date();
     }
 
@@ -62,7 +62,7 @@ export class ZadatakService {
     return this.prisma.zadatak.update({
       where: { id },
       data: {
-        status: (dto.status as Status) ?? undefined,
+        status: (dto.status as StatusZadatka) ?? undefined,
         datumZavrsetka: datumZavrsetka ?? undefined,
         izvrsitelj,
         opis: dto.opis ?? undefined,

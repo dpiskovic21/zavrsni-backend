@@ -31,6 +31,7 @@ model Projekt {
   naziv          String
   datumPocetka   DateTime           @default(now())
   datumZavrsetka DateTime?
+  status         StatusProjekta     @default(U_TIJEKU)
   voditelji      VoditeljProjekta[]
   zadaci         Zadatak[]
 }
@@ -45,28 +46,34 @@ model VoditeljProjekta {
 }
 
 model Zadatak {
-  id             Int        @id @default(autoincrement())
+  id             Int           @id @default(autoincrement())
   naziv          String
   opis           String
-  projekt        Projekt    @relation(fields: [projektId], references: [id])
+  projekt        Projekt       @relation(fields: [projektId], references: [id])
   projektId      Int
-  izvrsitelj     Korisnik   @relation("izvrsitelj", fields: [izvrsiteljId], references: [id])
+  izvrsitelj     Korisnik      @relation("izvrsitelj", fields: [izvrsiteljId], references: [id])
   izvrsiteljId   Int
-  izvjestitelj   Korisnik   @relation("izvjestitelj", fields: [izvjestiteljId], references: [id])
+  izvjestitelj   Korisnik      @relation("izvjestitelj", fields: [izvjestiteljId], references: [id])
   izvjestiteljId Int
   prioritet      Prioritet
   rok            DateTime
-  status         Status     @default(U_IZRADI)
-  datumIzrade    DateTime   @default(now())
+  status         StatusZadatka @default(U_IZRADI)
+  datumIzrade    DateTime      @default(now())
   datumZavrsetka DateTime?
   privitci       Privitak[]
   komentari      Komentar[]
 }
 
-enum Status {
+enum StatusZadatka {
   U_IZRADI    @map("U izradi")
   NA_PREGLEDU @map("Na pregledu")
   ZATVOREN    @map("Zatvoren")
+}
+
+enum StatusProjekta {
+  U_TIJEKU @map("U tijeku")
+  ZAVRSEN  @map("Završen")
+  OTKAZAN  @map("Otkazan")
 }
 
 enum Prioritet {
