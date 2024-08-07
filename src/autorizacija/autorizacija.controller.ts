@@ -9,7 +9,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { KorisnikService } from 'src/korisnik/korisnik.service';
-import { PrijavaDTO } from './dto';
+import { PrijavaDTO, RegistracijaDTO } from './dto';
 
 @Controller('autorizacija')
 export class AutorizacijaController {
@@ -26,7 +26,7 @@ export class AutorizacijaController {
   }
 
   @Post('registracija')
-  async registracija(@Body() registracijaDTO) {
+  async registracija(@Body() registracijaDTO: RegistracijaDTO) {
     try {
       return await this.korisnikService.create(registracijaDTO);
     } catch (e) {
