@@ -18,6 +18,11 @@ import { CreatePrivitakDTO } from './dto';
 export class PrivitakController {
   constructor(private readonly privitakService: PrivitakService) {}
 
+  @Get()
+  findAll() {
+    return this.privitakService.findAll();
+  }
+
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   async create(
@@ -56,7 +61,7 @@ export class PrivitakController {
     } catch (e) {
       if (e.code === 'ENOENT') throw new BadRequestException('File not found');
 
-      throw new InternalServerErrorException('Unknown server error.');
+      throw e;
     }
   }
 }

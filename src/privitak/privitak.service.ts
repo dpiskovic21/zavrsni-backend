@@ -31,7 +31,14 @@ export class PrivitakService {
     return fs.readFile('./upload/' + id);
   }
 
-  remove(id: string) {
+  findAll() {
+    return this.prisma.privitak.findMany();
+  }
+
+  async remove(id: string) {
+    await this.prisma.privitak.delete({
+      where: { putanja: id },
+    });
     return fs.rm('./upload/' + id);
   }
 }
