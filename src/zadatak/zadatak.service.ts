@@ -58,12 +58,14 @@ export class ZadatakService {
     if (dto.izvrsiteljId) {
       izvrsitelj = { connect: { id: dto.izvrsiteljId } };
     }
+
     return this.prisma.zadatak.update({
       where: { id },
       data: {
         status: (dto.status as Status) ?? undefined,
         datumZavrsetka: datumZavrsetka ?? undefined,
         izvrsitelj,
+        opis: dto.opis ?? undefined,
       },
     });
   }

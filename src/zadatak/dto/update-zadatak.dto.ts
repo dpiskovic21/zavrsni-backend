@@ -10,4 +10,8 @@ export class UpdateZadatakDTO {
   @IsEnum(Status)
   @IsOptional()
   status: string;
+
+  @IsString()
+  @IsOptional()
+  opis: string;
 }
