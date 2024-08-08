@@ -95,34 +95,33 @@ export class ProjektService {
   }
 
   async update(id: number, dto: UpdateProjektDTO) {
-    await this.prisma.projekt.update({
-      where: { id },
-      data: {
-        status: (dto.status as StatusProjekta) ?? undefined,
-        naziv: dto.naziv ?? undefined,
-      },
-    });
+    return await this.prisma.projekt
+      .update({
+        where: { id },
+        data: {
+          status: (dto.status as StatusProjekta) ?? undefined,
+          naziv: dto.naziv ?? undefined,
+        },
+      })
+      .then(async () => {
+        if (dto.voditelji) {
+          await this.prisma.voditeljProjekta.deleteMany({
+            where: { projektId: id },
+          });
 
-    if (dto.voditelji) {
-      await this.prisma.voditeljProjekta.deleteMany({
-        where: { projektId: id },
+          return await this.prisma.voditeljProjekta.createMany({
+            data: dto.voditelji.map((k) => ({
+              korisnikId: k,
+              projektId: id,
+            })),
+          });
+        }
       });
-
-      await this.prisma.voditeljProjekta.createMany({
-        data: dto.voditelji.map((k) => ({
-          korisnikId: k,
-          projektId: id,
-        })),
-      });
-    }
-
-    return this.prisma.projekt.findUnique({
-      where: { id },
-      include: { voditelji: true },
-    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} projekt`;
+    return this.prisma.projekt.delete({
+      where: { id },
+    });
   }
 }
