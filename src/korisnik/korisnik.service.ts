@@ -11,12 +11,15 @@ export class KorisnikService {
     const { lozinka, ...ostatak } = dto;
     const hash = await bcrypt.hash(lozinka, 10);
 
-    return this.prisma.korisnik.create({
+    const korisnik = await this.prisma.korisnik.create({
       data: {
         ...ostatak,
         hash,
       },
     });
+
+    delete korisnik.hash;
+    return korisnik;
   }
 
   findAll() {
