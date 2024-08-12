@@ -37,9 +37,9 @@ model Projekt {
 }
 
 model VoditeljProjekta {
-  korisnik   Korisnik @relation(fields: [korisnikId], references: [id])
+  korisnik   Korisnik @relation(fields: [korisnikId], references: [id], onDelete: Cascade)
   korisnikId Int
-  projekt    Projekt  @relation(fields: [projektId], references: [id])
+  projekt    Projekt  @relation(fields: [projektId], references: [id], onDelete: Cascade)
   projektId  Int
 
   @@id([korisnikId, projektId])
@@ -49,11 +49,11 @@ model Zadatak {
   id             Int           @id @default(autoincrement())
   naziv          String
   opis           String
-  projekt        Projekt       @relation(fields: [projektId], references: [id])
+  projekt        Projekt       @relation(fields: [projektId], references: [id], onDelete: Cascade)
   projektId      Int
-  izvrsitelj     Korisnik      @relation("izvrsitelj", fields: [izvrsiteljId], references: [id])
+  izvrsitelj     Korisnik      @relation("izvrsitelj", fields: [izvrsiteljId], references: [id], onDelete: Cascade)
   izvrsiteljId   Int
-  izvjestitelj   Korisnik      @relation("izvjestitelj", fields: [izvjestiteljId], references: [id])
+  izvjestitelj   Korisnik      @relation("izvjestitelj", fields: [izvjestiteljId], references: [id], onDelete: Cascade)
   izvjestiteljId Int
   prioritet      Prioritet
   rok            DateTime
@@ -88,15 +88,15 @@ model Privitak {
   naziv     String
   mimetype  String
   zadatakId Int
-  zadatak   Zadatak @relation(fields: [zadatakId], references: [id])
+  zadatak   Zadatak @relation(fields: [zadatakId], references: [id], onDelete: Cascade)
 }
 
 model Komentar {
   id          Int      @id @default(autoincrement())
   sadrzaj     String
   korisnikId  Int
-  korisnik    Korisnik @relation(fields: [korisnikId], references: [id])
+  korisnik    Korisnik @relation(fields: [korisnikId], references: [id], onDelete: Cascade)
   zadatakId   Int
-  zadatak     Zadatak  @relation(fields: [zadatakId], references: [id])
+  zadatak     Zadatak  @relation(fields: [zadatakId], references: [id], onDelete: Cascade)
   datumIzrade DateTime @default(now())
 }
