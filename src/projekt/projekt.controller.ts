@@ -25,6 +25,11 @@ export class ProjektController {
     return this.projektService.findAll();
   }
 
+  @Get('/statistika')
+  statistikaZaProjekte(@Query('datum') datum: string) {
+    return this.projektService.getStatistikaZaProjekte(datum);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.projektService.findOne(+id);

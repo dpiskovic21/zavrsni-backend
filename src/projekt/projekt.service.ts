@@ -36,6 +36,32 @@ export class ProjektService {
     });
   }
 
+  async getStatistikaZaProjekte(datum: string) {
+    let where: any;
+    if (datum) {
+      const d = new Date(datum);
+      where = {
+        datumPocetka: {
+          gt: new Date(d.getFullYear(), d.getMonth()),
+          lte: new Date(d.getFullYear(), d.getMonth() + 1),
+        },
+      };
+    }
+
+    const sviProjekti = await this.prisma.projekt.findMany({
+      where,
+    });
+
+    const acc = {};
+    for (let key of Object.keys(StatusProjekta)) {
+      acc[key] = 0;
+    }
+    return sviProjekti.reduce((acc, projekt) => {
+      acc[projekt.status]++;
+      return acc;
+    }, acc);
+  }
+
   async getStatistika(id: number, datum: string) {
     let where: any = id != -1 ? { projektId: id } : undefined;
     if (datum) {
